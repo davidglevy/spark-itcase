@@ -1,0 +1,1 @@
+Leave here otherwise we don't see the empty dir webapp in JAR.
