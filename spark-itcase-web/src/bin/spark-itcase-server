@@ -1,2 +1,4 @@
+#!/bin/bash
 
-java -jar ../spark-itcase.jar levy.david.spark.itcase.web.server.EmbeddedJetty
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+java -jar ${DIR}/../spark-itcase.jar levy.david.spark.itcase.web.server.EmbeddedJetty
