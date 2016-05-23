@@ -43,8 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class LocalRepository {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LocalRepository.class);
+	private static final Logger logger = LoggerFactory.getLogger(LocalRepository.class);
 
 	RepositorySystem system;
 
@@ -59,20 +58,15 @@ public class LocalRepository {
 	 * @param artifactId
 	 * @param version
 	 */
-	public void retrieveArtifact(String groupId, String artifactId,
-			String version, OutputStream outStream) {
-		ServletOutTransferListener listener = new ServletOutTransferListener(
-				outStream, new ConsoleTransferListener());
-		RepositorySystemSession session = Booter.newRepositorySystemSession(
-				system, listener);
+	public void retrieveArtifact(String groupId, String artifactId, String version, OutputStream outStream) {
+		ServletOutTransferListener listener = new ServletOutTransferListener(outStream, new ConsoleTransferListener());
+		RepositorySystemSession session = Booter.newRepositorySystemSession(system, listener);
 
-		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId
-				+ ":" + version);
+		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId + ":" + version);
 
 		ArtifactRequest artifactRequest = new ArtifactRequest();
 		artifactRequest.setArtifact(artifact);
-		List<RemoteRepository> repositories = Booter.newRepositories(system,
-				session);
+		List<RemoteRepository> repositories = Booter.newRepositories(system, session);
 		artifactRequest.setRepositories(repositories);
 
 		ArtifactResult artifactResult;
@@ -86,12 +80,10 @@ public class LocalRepository {
 
 		ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
 		descriptorRequest.setArtifact(artifact);
-		descriptorRequest.setRepositories(Booter.newRepositories(system,
-				session));
+		descriptorRequest.setRepositories(Booter.newRepositories(system, session));
 		ArtifactDescriptorResult descriptorResult;
 		try {
-			descriptorResult = system.readArtifactDescriptor(session,
-					descriptorRequest);
+			descriptorResult = system.readArtifactDescriptor(session, descriptorRequest);
 		} catch (ArtifactDescriptorException e) {
 			logger.error("Unable to retrieve hierarchy: " + e.getMessage(), e);
 			return;
@@ -101,23 +93,19 @@ public class LocalRepository {
 		request.setRootArtifact(artifact);
 		request.setRepositories(repositories);
 		request.setDependencies(descriptorResult.getDependencies());
-		request.setManagedDependencies(descriptorResult
-				.getManagedDependencies());
+		request.setManagedDependencies(descriptorResult.getManagedDependencies());
 
 		try {
 			system.collectDependencies(session, request);
 		} catch (DependencyCollectionException e) {
-			logger.error("Unable to retrieve dependencies: " + e.getMessage(),
-					e);
+			logger.error("Unable to retrieve dependencies: " + e.getMessage(), e);
 		}
 
 	}
 
-	public void deployArtifact(String groupId, String artifactId,
-			String version, InputStream jarInStream, InputStream pomInStream)
-			throws InstallationException, IOException {
-		RepositorySystemSession session = Booter.newRepositorySystemSession(
-				system, null);
+	public void deployArtifact(String groupId, String artifactId, String version, InputStream jarInStream,
+			InputStream pomInStream) throws InstallationException, IOException {
+		RepositorySystemSession session = Booter.newRepositorySystemSession(system, null);
 
 		File tmp = File.createTempFile("jar-deploy-tmp-", ".jar");
 		try (FileOutputStream fout = new FileOutputStream(tmp)) {
@@ -129,11 +117,9 @@ public class LocalRepository {
 			IOUtils.copy(pomInStream, fout);
 		}
 
-		Artifact jarArtifact = new DefaultArtifact(groupId, artifactId, "",
-				"jar", version, null, tmp);
+		Artifact jarArtifact = new DefaultArtifact(groupId, artifactId, "", "jar", version, null, tmp);
 
-		Artifact pomArtifact = new DefaultArtifact(groupId, artifactId, "",
-				"pom", version, null, pomTmp);
+		Artifact pomArtifact = new DefaultArtifact(groupId, artifactId, "", "pom", version, null, pomTmp);
 
 		try {
 			InstallRequest installRequest = new InstallRequest();
@@ -146,104 +132,66 @@ public class LocalRepository {
 	}
 
 	public String buildFile(String groupId, String artifactId, String version) throws RepositoryException {
-		RepositorySystemSession session = Booter.newRepositorySystemSession(
-				system, null);
+		RepositorySystemSession session = Booter.newRepositorySystemSession(system, null);
 
-		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId
-				+ ":" + version);
+		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId + ":" + version);
 
+		ArtifactRequest artifactRequest = new ArtifactRequest();
+		artifactRequest.setArtifact(artifact);
+		List<RemoteRepository> repositories = Booter.newRepositories(system, session);
+		artifactRequest.setRepositories(repositories);
 
-		ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
-		descriptorRequest.setArtifact(artifact);
-		descriptorRequest.setRepositories(Booter.newRepositories(system,
-				session));
-		ArtifactDescriptorResult descriptorResult = system.readArtifactDescriptor(session,
-				descriptorRequest);
-		
-		CollectRequest request = new CollectRequest();
-		request.setRootArtifact(artifact);
-		//request.setRepositories(repositories);
-		request.setDependencies(descriptorResult.getDependencies());
-		request.setManagedDependencies(descriptorResult
-				.getManagedDependencies());
-
-
-		
-		CollectResult result = system.collectDependencies(session, request);
-		List<String> resultPaths = new ArrayList<String>();
-
-		//Dependency dependency = new Dependency(artifact,"compile");//, "runtime");
-		//DefaultDependencyNode root = new DefaultDependencyNode(dependency);
-		ArtifactRequest artifactRequest = new ArtifactRequest(result.getRoot());		
-		system.resolveArtifact(session, artifactRequest);
-		
-		//artifactRequest.setCollectRequest(request);
-		ArtifactResult artifactResult = system.resolveArtifact(session,
-				artifactRequest);
-
-		
-		return artifactResult.getArtifact().getFile()
-					.getAbsolutePath();
+		ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
+		artifact = artifactResult.getArtifact();
+		return artifact.getFile().getAbsolutePath();
 	}
-	
-	
-	public List<String> buildFiles(String groupId, String artifactId,
-			String version) throws RepositoryException,
-			ArtifactDescriptorException {
 
-		RepositorySystemSession session = Booter.newRepositorySystemSession(
-				system, null);
+	public List<String> buildFiles(String groupId, String artifactId, String version)
+			throws RepositoryException, ArtifactDescriptorException {
 
-		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId
-				+ ":" + version);
+		RepositorySystemSession session = Booter.newRepositorySystemSession(system, null);
 
+		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId + ":" + version);
 
 		ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
 		descriptorRequest.setArtifact(artifact);
-		descriptorRequest.setRepositories(Booter.newRepositories(system,
-				session));
-		ArtifactDescriptorResult descriptorResult = system.readArtifactDescriptor(session,
-				descriptorRequest);
-		
+		descriptorRequest.setRepositories(Booter.newRepositories(system, session));
+		ArtifactDescriptorResult descriptorResult = system.readArtifactDescriptor(session, descriptorRequest);
+
 		CollectRequest request = new CollectRequest();
 		request.setRootArtifact(artifact);
-		//request.setRepositories(repositories);
+		// request.setRepositories(repositories);
 		request.setDependencies(descriptorResult.getDependencies());
-		request.setManagedDependencies(descriptorResult
-				.getManagedDependencies());
+		request.setManagedDependencies(descriptorResult.getManagedDependencies());
 
-
-		
 		CollectResult result = system.collectDependencies(session, request);
 		List<String> resultPaths = new ArrayList<String>();
 
-		//Dependency dependency = new Dependency(artifact,"compile");//, "runtime");
-		//DefaultDependencyNode root = new DefaultDependencyNode(dependency);
+		// Dependency dependency = new Dependency(artifact,"compile");//,
+		// "runtime");
+		// DefaultDependencyNode root = new DefaultDependencyNode(dependency);
 		DependencyRequest artifactRequest = new DependencyRequest(result.getRoot(), new DependencyFilter() {
-			
+
 			@Override
 			public boolean accept(DependencyNode node, List<DependencyNode> parents) {
 				if (node.getDependency() == null) {
 					return true;
 				}
 				String scope = node.getDependency().getScope();
-				return StringUtils.isBlank(scope) || (!scope.equalsIgnoreCase("provided") && !scope.equalsIgnoreCase("test"));
+				return StringUtils.isBlank(scope)
+						|| (!scope.equalsIgnoreCase("provided") && !scope.equalsIgnoreCase("test"));
 			}
 		});
-		
-		//artifactRequest.setCollectRequest(request);
-		DependencyResult dependencyResult = system.resolveDependencies(session,
-				artifactRequest);
 
-		
+		// artifactRequest.setCollectRequest(request);
+		DependencyResult dependencyResult = system.resolveDependencies(session, artifactRequest);
+
 		for (ArtifactResult artifactResult : dependencyResult.getArtifactResults()) {
 
-			resultPaths.add(artifactResult.getArtifact().getFile()
-					.getAbsolutePath());
+			resultPaths.add(artifactResult.getArtifact().getFile().getAbsolutePath());
 		}
 
 		return resultPaths;
 	}
-
 
 }
