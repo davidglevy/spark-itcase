@@ -23,7 +23,7 @@ public class EmbeddedJetty {
 
 	private static final int DEFAULT_PORT = 10080;
 	private static final String CONTEXT_PATH = "/";
-	private static final String MAPPING_URL = "/*";
+	private static final String MAPPING_URL = "/rest/*";
 
 	public static void main(String[] args) throws Exception {
 		try {
