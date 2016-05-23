@@ -31,7 +31,7 @@ public class EmbeddedJetty {
 			new EmbeddedJetty().startJetty(getPortFromArgs(args));
 			logger.info("Server started");
 		} catch (Throwable t) {
-			logger.error("Server error received: " + t.getMessage());
+			logger.error("Server error received: " + t.getMessage(), t);
 		}
 	}
 
@@ -49,11 +49,16 @@ public class EmbeddedJetty {
 	}
 
 	private void startJetty(int port) throws Exception {
+		logger.info("Creating Jetty");
 		Server server = new Server(port);
 
+		logger.info("Initializing Jetty Spring context");
 		server.setHandler(getServletContextHandler(getContext()));
+		logger.info("Starting Jetty Server");
 		server.start();
+		logger.info("Joining Jetty Server");
 		server.join();
+		logger.info("Server started, joined and running.");
 	}
 
 	private static ServletContextHandler getServletContextHandler(WebApplicationContext context) throws IOException {
