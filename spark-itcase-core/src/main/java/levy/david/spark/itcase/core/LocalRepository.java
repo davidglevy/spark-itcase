@@ -145,6 +145,48 @@ public class LocalRepository {
 
 	}
 
+	public String buildFile(String groupId, String artifactId, String version) throws RepositoryException {
+		RepositorySystemSession session = Booter.newRepositorySystemSession(
+				system, null);
+
+		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId
+				+ ":" + version);
+
+
+		ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
+		descriptorRequest.setArtifact(artifact);
+		descriptorRequest.setRepositories(Booter.newRepositories(system,
+				session));
+		ArtifactDescriptorResult descriptorResult = system.readArtifactDescriptor(session,
+				descriptorRequest);
+		
+		CollectRequest request = new CollectRequest();
+		request.setRootArtifact(artifact);
+		//request.setRepositories(repositories);
+		request.setDependencies(descriptorResult.getDependencies());
+		request.setManagedDependencies(descriptorResult
+				.getManagedDependencies());
+
+
+		
+		CollectResult result = system.collectDependencies(session, request);
+		List<String> resultPaths = new ArrayList<String>();
+
+		//Dependency dependency = new Dependency(artifact,"compile");//, "runtime");
+		//DefaultDependencyNode root = new DefaultDependencyNode(dependency);
+		ArtifactRequest artifactRequest = new ArtifactRequest(result.getRoot());		
+		system.resolveArtifact(session, artifactRequest);
+		
+		//artifactRequest.setCollectRequest(request);
+		ArtifactResult artifactResult = system.resolveArtifact(session,
+				artifactRequest);
+
+		
+		return artifactResult.getArtifact().getFile()
+					.getAbsolutePath();
+	}
+	
+	
 	public List<String> buildFiles(String groupId, String artifactId,
 			String version) throws RepositoryException,
 			ArtifactDescriptorException {
@@ -202,5 +244,6 @@ public class LocalRepository {
 
 		return resultPaths;
 	}
+
 
 }

@@ -53,10 +53,13 @@ public class SparkJobController {
 		try {
 			List<String> files = repo.buildFiles(params.getGroupId(),
 					params.getArtifactId(), params.getVersion());
+			
+			String mainJar = repo.buildFile(params.getGroupId(),
+					params.getArtifactId(), params.getVersion());
 			String classpath = "file:/" + StringUtils.join(files, ";file:/");
 			logger.info("Classpath will be: " + classpath);
 
-			RunResult commandResult = runUtil.runCommand("/usr/bin/spark-submit --class " + params.getClassName() + " --jars " + classpath);
+			RunResult commandResult = runUtil.runCommand("/usr/bin/spark-submit --class " + params.getClassName() + " --jars " + classpath + " " + mainJar);
 			logger.info("Command result was: " + commandResult);
 			commandResult.setJobId(UUID.randomUUID().toString());
 			
