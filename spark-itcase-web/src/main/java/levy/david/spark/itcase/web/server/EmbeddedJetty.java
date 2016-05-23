@@ -6,8 +6,10 @@ import java.io.IOException;
 import javax.servlet.MultipartConfigElement;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -67,25 +69,12 @@ public class EmbeddedJetty {
 		contextHandler.setContextPath(CONTEXT_PATH);
 		ServletHolder holder = new ServletHolder(new DispatcherServlet(context));
 
-		// String uploadLocation = null;
-		// //if (HAVE CONFIG PARAM) {
-		// uploadLocation = System.getProperty("user.home") + File.separator +
-		// ".itcase-temp";
-		// File uploadLocationFile = new File(uploadLocation);
-		// if (!uploadLocationFile.exists()) {
-		// uploadLocationFile.mkdir();
-		// } else if (!uploadLocationFile.isDirectory()){
-		// throw new RuntimeException("Unable to write to artifact temporary
-		// directory");
-		// }
-		// //}
-		//
-		// MultipartConfigElement element = new
-		// MultipartConfigElement(uploadLocation);
-		// holder.getRegistration().setMultipartConfig(element);
 		contextHandler.addServlet(holder, MAPPING_URL);
 		contextHandler.addEventListener(new ContextLoaderListener(context));
-		contextHandler.setResourceBase(new ClassPathResource("/webapp").getURI().toString());
+		ResourceHandler resHandler = new ResourceHandler();
+		resHandler.setBaseResource(Resource.newClassPathResource("/webapp"));
+		contextHandler.setHandler(resHandler);
+		//contextHandler.setResourceBase(new ClassPathResource("/webapp").getURI().toString());
 		return contextHandler;
 	}
 
