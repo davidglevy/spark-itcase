@@ -6,6 +6,8 @@ public class RunResult {
 
 	private int result;
 	
+	private String output;
+	
 	public String getJobId() {
 		return jobId;
 	}
@@ -20,6 +22,14 @@ public class RunResult {
 
 	public void setResult(int result) {
 		this.result = result;
+	}
+
+	public String getOutput() {
+		return output;
+	}
+
+	public void setOutput(String output) {
+		this.output = output;
 	}
 
 	

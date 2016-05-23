@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpHost;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,6 +38,12 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 	@Parameter
 	private String endpoint;
 
+	@Parameter
+	private String proxyHost;
+	
+	@Parameter
+	private int proxyPort;
+	
 	@Parameter(property = "project.build.directory")
 	private File buildDir;
 
@@ -45,10 +53,18 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 	@Parameter(property = "project.build.finalName")
 	private String finalName;
 
+	@Parameter
+	private String classToRun;
+	
+	
 	public void execute() throws MojoExecutionException {
 
 		try {
 
+			if (StringUtils.isNotBlank(proxyHost)) {
+				Unirest.setProxy(new HttpHost(proxyHost, proxyPort));
+			}
+			
 			// Install the artifact in the remote server.
 			getLog().info("Deploying project artifact");
 
@@ -106,7 +122,8 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 			params.setArtifactId(project.getArtifactId());
 			params.setGroupId(project.getGroupId());
 			params.setVersion(project.getVersion());
-
+			params.setClassName(classToRun);
+			
 			ObjectMapper mapper = new ObjectMapper();
 			byte[] dataToSend = mapper.writeValueAsBytes(params);
 			

@@ -12,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import levy.david.spark.itcase.web.domain.RunResult;
+
 @Component
 public class RunUtil {
 	private static final Logger logger = LoggerFactory.getLogger(RunUtil.class);
 	
-	public int runCommand(String command) throws Exception {
+	public RunResult runCommand(String command) throws Exception {
 		CommandLine cmdLine = CommandLine.parse(command);
 		DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
 //
@@ -32,15 +34,21 @@ public class RunUtil {
 		executor.execute(cmdLine, resultHandler);
 //		Executor executor = new DefaultExecutor();
 		
-		
+		RunResult result = new RunResult();
 
 		// some time later the result handler callback was invoked so we
 		// can safely request the exit value
-		resultHandler.waitFor(1000);
+		int duration = 0;
+		while (!resultHandler.hasResult()) {
+			resultHandler.waitFor(1000);
+			logger.info("Waited [" + ++duration + "] for result");
+		}
+		
 		ExecuteException e = resultHandler.getException();
 		if (e == null) {
 			int exitValue = resultHandler.getExitValue();
-			return exitValue;
+			result.setResult(exitValue);
+			return result;
 		} else {
 			throw new Exception("Unable to execute command: " + e.getMessage(),e);
 		}

@@ -56,13 +56,11 @@ public class SparkJobController {
 			String classpath = "file:/" + StringUtils.join(files, ";file:/");
 			logger.info("Classpath will be: " + classpath);
 
-			int commandResult = runUtil.runCommand("echo spark-submit --class " + params.getClassName() + " --jars " + classpath);
+			RunResult commandResult = runUtil.runCommand("spark-submit --class " + params.getClassName() + " --jars " + classpath);
 			logger.info("Command result was: " + commandResult);
-			RunResult result = new RunResult();
-			result.setJobId(UUID.randomUUID().toString());
-			result.setResult(commandResult);
+			commandResult.setJobId(UUID.randomUUID().toString());
 			
-			return result;
+			return commandResult;
 		} catch (Exception e) {
 			throw new ServletException("Unable to build classpath: "
 					+ e.getMessage(), e);

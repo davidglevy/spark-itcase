@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
+
+import levy.david.spark.itcase.web.domain.RunResult;
+
 import static org.junit.Assert.*;
 
 public class RunUtilTest {
@@ -12,9 +15,9 @@ public class RunUtilTest {
 	public void testNonExistent() throws Exception {
 		RunUtil util = new RunUtil();
 		if (SystemUtils.IS_OS_WINDOWS) {
-			int output = util.runCommand("C:\\Temp\\hello_world_2.bat");			
+			util.runCommand("C:\\Temp\\hello_world_2.bat");			
 		} else if (SystemUtils.IS_OS_LINUX){
-			int output = util.runCommand("/usr/bin/echo_2");						
+			util.runCommand("/usr/bin/echo_2");						
 		} else {
 			fail("No system tests for operating system [" + SystemUtils.OS_NAME + "]");
 		}
@@ -25,11 +28,11 @@ public class RunUtilTest {
 		RunUtil util = new RunUtil();
 		
 		if (SystemUtils.IS_OS_WINDOWS) {
-			int output = util.runCommand("C:\\Temp\\hello_world.bat");
-			assertEquals(0, output);
+			RunResult output = util.runCommand("C:\\Temp\\hello_world.bat");
+			assertEquals(0, output.getResult());
 		} else if (SystemUtils.IS_OS_LINUX){
-			int output = util.runCommand("/usr/bin/echo");
-			assertEquals(0, output);
+			RunResult output = util.runCommand("/usr/bin/echo");
+			assertEquals(0, output.getResult());
 		} else {
 			fail("No system tests for operating system [" + SystemUtils.OS_NAME + "]");
 		}
