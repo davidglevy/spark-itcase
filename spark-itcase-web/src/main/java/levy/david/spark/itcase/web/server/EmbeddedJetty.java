@@ -19,9 +19,7 @@ public class EmbeddedJetty {
 
     private static final int DEFAULT_PORT = 10080;
     private static final String CONTEXT_PATH = "/";
-    private static final String CONFIG_LOCATION = "eu.kielczewski.example.config";
     private static final String MAPPING_URL = "/*";
-    private static final String DEFAULT_PROFILE = "dev";
 
     public static void main(String[] args) throws Exception {
         new EmbeddedJetty().startJetty(getPortFromArgs(args));
