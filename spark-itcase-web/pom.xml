@@ -111,7 +111,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>levy.david.spark.itcase.web.server.EmbeddedJetty</mainClass>
+							<mainClass>solutions.deepfield.spark.itcase.web.server.EmbeddedJetty</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
