@@ -1,4 +1,4 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-java -DLOG_DIR=${DIR}/../log -jar ${DIR}/../spark-itcase.jar levy.david.spark.itcase.web.server.EmbeddedJetty
+java -DLOG_DIR=${DIR}/../log -jar ${DIR}/../spark-itcase.jar solutions.deepfield.spark.itcase.web.server.EmbeddedJetty

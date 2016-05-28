@@ -9,8 +9,8 @@
         http://www.springframework.org/schema/context 
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:component-scan base-package="levy.david.spark.itcase.web.controller" />
-	<context:component-scan base-package="levy.david.spark.itcase.web.util" />
+	<context:component-scan base-package="solutions.deepfield.spark.itcase.web.controller" />
+	<context:component-scan base-package="solutions.deepfield.spark.itcase.web.util" />
 	<mvc:annotation-driven />
 
 	<bean id="contentNegotiationManager"
