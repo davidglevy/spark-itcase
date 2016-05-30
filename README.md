@@ -1,5 +1,5 @@
 # spark-itcase
-Maven plugin which will connect to a server module to run Spark programs remotely during development and integration builds. 
+Allow developers to remotely run Spark Jobs as part of their Maven build cycle and integration builds on build servers. 
 
 # Use Cases
 The code here will satisfy the following use cases:
@@ -9,7 +9,8 @@ The code here will satisfy the following use cases:
 # Goals
 The spark-itcase project has the following high level goals:
 * Reduce build cycle time for developers writing Java or Scala based Spark jobs built with Maven
-* Reduce manual tasks required when running Spark jobs (transferring files,
+* Reduce manual tasks required when running Spark jobs (transferring files, creating spark-submit commands).
+* Improve code quality by testing on a full cluster earlier in the development lifecycle.
 
 # How Does it Achieve it's Goals?
 * Runs the code during the Maven integration-test phase pre-commit 
@@ -30,7 +31,7 @@ The following diagram illustrates how the maven plugin interacts with the server
 * Start the server (spark-itcase/bin/spark-itcase-server)
 
 ## 2.) Maven Plugin
-Add the Maven plugin to your build like so:
+Add the Maven plugin to your build:
 
 ~~~~
 			<plugin>
@@ -55,3 +56,4 @@ Add the Maven plugin to your build like so:
 ~~~~
 
 ## 3.) Run Your Build
+The "integration-test" phase will run as part of a standard "mvn clean install" command. 
