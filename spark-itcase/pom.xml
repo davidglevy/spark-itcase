@@ -37,6 +37,14 @@
 		</license>
 	</licenses>
 
+	<developers>
+		<developer>
+			<name>David Levy</name>
+			<url>https://github.com/davidglevy</url>
+			<id>davidglevy</id>
+		</developer>
+	</developers>
+
 	<modules>
 		<module>../spark-itcase-core</module>
 		<module>../spark-itcase-maven</module>

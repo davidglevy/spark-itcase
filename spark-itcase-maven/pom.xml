@@ -43,6 +43,15 @@
 		</license>
 	</licenses>
 
+	<developers>
+		<developer>
+			<name>David Levy</name>
+			<url>https://github.com/davidglevy</url>
+			<id>davidglevy</id>
+		</developer>
+	</developers>
+
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<aether.version>1.1.0</aether.version>
