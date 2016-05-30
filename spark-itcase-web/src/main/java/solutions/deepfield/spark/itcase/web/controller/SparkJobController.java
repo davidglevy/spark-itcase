@@ -25,8 +25,8 @@ import java.util.UUID;
 import javax.servlet.ServletException;
 
 import solutions.deepfield.spark.itcase.core.LocalRepository;
-import solutions.deepfield.spark.itcase.web.domain.RunParams;
-import solutions.deepfield.spark.itcase.web.domain.RunResult;
+import solutions.deepfield.spark.itcase.core.domain.RunParams;
+import solutions.deepfield.spark.itcase.core.domain.RunResult;
 import solutions.deepfield.spark.itcase.web.util.RunUtil;
 
 import org.apache.commons.lang.StringUtils;

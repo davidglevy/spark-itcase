@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 
-import solutions.deepfield.spark.itcase.web.domain.RunResult;
+import solutions.deepfield.spark.itcase.core.domain.RunResult;
 import solutions.deepfield.spark.itcase.web.util.RunUtil;
 
 import static org.junit.Assert.*;

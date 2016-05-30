@@ -41,6 +41,8 @@ import com.mashape.unirest.request.HttpRequestWithBody;
 import com.mashape.unirest.request.body.MultipartBody;
 import com.mashape.unirest.request.body.RawBody;
 
+import solutions.deepfield.spark.itcase.core.domain.RunParams;
+
 /**
  * Loads the dependencies for the project into the target environment.
  */

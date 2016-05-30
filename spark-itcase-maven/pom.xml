@@ -58,6 +58,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- Core dependency -->
+		<dependency>
+			<groupId>solutions.deepfield</groupId>
+			<artifactId>spark-itcase-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	
 		<!-- Maven interaction -->
 		<dependency>
 			<groupId>org.apache.maven</groupId>
@@ -86,22 +93,7 @@
 			<artifactId>maven-dependency-plugin</artifactId>
 			<version>2.10</version>
 		</dependency>
-		<!-- Logging -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.6</version>
-		</dependency>
+
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -113,16 +105,6 @@
 			<groupId>com.mashape.unirest</groupId>
 			<artifactId>unirest-java</artifactId>
 			<version>1.4.8</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.7.3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.7.3</version>
 		</dependency>
 	</dependencies>
 

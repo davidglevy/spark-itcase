@@ -1,6 +1,4 @@
-package solutions.deepfield.spark.itcase.web.domain;
-
-import java.util.List;
+package solutions.deepfield.spark.itcase.core.domain;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,48 +19,43 @@ import java.util.List;
  * under the License.
  */
 
-public class RunResult {
+public class LoadParams {
 
-	private String jobId;
-
-	private int result;
+	private String groupId;
 	
-	private String output;
+	private String artifactId;
 	
-	private List<String> logs;
-	
-	public String getJobId() {
-		return jobId;
+	private String version;
+
+	public String getGroupId() {
+		return groupId;
 	}
 
-	public void setJobId(String jobId) {
-		this.jobId = jobId;
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
-	public int getResult() {
-		return result;
+	public String getArtifactId() {
+		return artifactId;
 	}
 
-	public void setResult(int result) {
-		this.result = result;
+	public void setArtifactId(String artifactId) {
+		this.artifactId = artifactId;
 	}
 
-	public String getOutput() {
-		return output;
+	public String getVersion() {
+		return version;
 	}
 
-	public void setOutput(String output) {
-		this.output = output;
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
-	public List<String> getLogs() {
-		return logs;
+	@Override
+	public String toString() {
+		return "LoadParams [groupId=" + groupId + ", artifactId=" + artifactId
+				+ ", version=" + version + "]";
 	}
-
-	public void setLogs(List<String> logs) {
-		this.logs = logs;
-	}
-
 	
 	
 	

@@ -1,4 +1,4 @@
-package solutions.deepfield.spark.itcase.maven;
+package solutions.deepfield.spark.itcase.core.domain;
 
 import java.util.List;
 
@@ -25,7 +25,15 @@ public class RunResult {
 
 	private String jobId;
 
+	private int result;
+	
+	private String output;
+	
 	private List<String> logs;
+	
+	private String exceptionMessage;
+	
+	private String exceptionStack;
 	
 	public String getJobId() {
 		return jobId;
@@ -35,6 +43,22 @@ public class RunResult {
 		this.jobId = jobId;
 	}
 
+	public int getResult() {
+		return result;
+	}
+
+	public void setResult(int result) {
+		this.result = result;
+	}
+
+	public String getOutput() {
+		return output;
+	}
+
+	public void setOutput(String output) {
+		this.output = output;
+	}
+
 	public List<String> getLogs() {
 		return logs;
 	}
@@ -42,6 +66,24 @@ public class RunResult {
 	public void setLogs(List<String> logs) {
 		this.logs = logs;
 	}
+
+	public String getExceptionMessage() {
+		return exceptionMessage;
+	}
+
+	public void setExceptionMessage(String exceptionMessage) {
+		this.exceptionMessage = exceptionMessage;
+	}
+
+	public String getExceptionStack() {
+		return exceptionStack;
+	}
+
+	public void setExceptionStack(String exceptionStack) {
+		this.exceptionStack = exceptionStack;
+	}
+
+
 	
 	
 	

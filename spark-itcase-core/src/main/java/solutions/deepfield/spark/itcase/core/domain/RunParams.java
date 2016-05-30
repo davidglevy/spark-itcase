@@ -1,4 +1,4 @@
-package solutions.deepfield.spark.itcase.maven;
+package solutions.deepfield.spark.itcase.core.domain;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,8 +19,35 @@ package solutions.deepfield.spark.itcase.maven;
  * under the License.
  */
 
-public class DistributionPhase {
+import java.util.List;
+import java.util.Map;
 
-	
-	
+public class RunParams extends LoadParams {
+
+	private String className;
+
+	private List<String> parameters;
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public List<String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<String> parameters) {
+		this.parameters = parameters;
+	}
+
+	@Override
+	public String toString() {
+		return "RunParams [className=" + className + ", parameters=" + parameters + ", groupId=" + getGroupId()
+				+ ", artifactId=" + getArtifactId() + ", version=" + getVersion() + "]";
+	}
+
 }
