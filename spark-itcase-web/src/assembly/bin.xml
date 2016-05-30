@@ -42,6 +42,15 @@
 			<lineEnding>unix</lineEnding>
 			<fileMode>0755</fileMode>
 		</fileSet>
+		<fileSet>
+			<directory>src/conf</directory>
+			<outputDirectory>conf</outputDirectory>
+			<includes>
+				<include>config.json</include>
+			</includes>
+			<lineEnding>unix</lineEnding>
+			<fileMode>0755</fileMode>
+		</fileSet>
 		<!-- <fileSet> -->
 		<!-- <directory>target</directory> -->
 		<!-- <outputDirectory>lib</outputDirectory> -->
