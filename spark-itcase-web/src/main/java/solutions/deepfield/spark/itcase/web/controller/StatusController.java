@@ -7,12 +7,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HttpServletBean;
 import org.springframework.web.servlet.ModelAndView;
+
+import solutions.deepfield.spark.itcase.core.domain.ApplicationStatusResponse;
+import solutions.deepfield.spark.itcase.core.domain.RunParams;
+import solutions.deepfield.spark.itcase.core.domain.RunResult;
+import solutions.deepfield.spark.itcase.core.util.AppUtil;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -38,19 +49,29 @@ public class StatusController {
 
 	private static final Logger logger = LoggerFactory.getLogger(StatusController.class);
 	
+	@Autowired
+	private AppUtil appUtil;
+	
+	private long startupTime;
+	
 	@PostConstruct
 	public void postConstruct() {
 		logger.info("Starting up");
+		startupTime = System.currentTimeMillis();
 	}
 	
 	// TODO Put in a proper status message response based on build version.
 	@RequestMapping("/status")
-	public void status(HttpServletResponse response) throws IOException, ServletException {
-		response.setContentType("text/plain");
-		String output = "<br><div style='text-align:center;'>"
-				+ "<h3>********** Hello World, Spring MVC Tutorial</h3>This message is coming from CrunchifyHelloWorld.java **********</div><br><br>";
-		byte[] outputBytes = output.getBytes("UTF-8");
+	public @ResponseBody ApplicationStatusResponse status() {
+		ApplicationStatusResponse response = new ApplicationStatusResponse();
 		
-		response.getOutputStream().write(outputBytes);
+		
+		Period period = new Period(System.currentTimeMillis() - startupTime);
+		response.setUptime(PeriodFormat.getDefault().print(period));
+		response.setUser(System.getProperty("user.name"));
+		response.setVersion(appUtil.getVersion());
+		response.setTimestamp(appUtil.getTimestamp());
+		
+		return response;
 	}
 }

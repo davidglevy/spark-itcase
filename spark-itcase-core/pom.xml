@@ -52,6 +52,17 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.2.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>4.2.5.RELEASE</version>
+		</dependency>
+
 		<!-- Maven interaction -->
 		<dependency>
 			<groupId>org.eclipse.aether</groupId>

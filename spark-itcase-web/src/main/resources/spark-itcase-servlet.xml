@@ -11,6 +11,8 @@
 
 	<context:component-scan base-package="solutions.deepfield.spark.itcase.web.controller" />
 	<context:component-scan base-package="solutions.deepfield.spark.itcase.web.util" />
+	<context:component-scan base-package="solutions.deepfield.spark.itcase.core" />
+	
 	<mvc:annotation-driven />
 
 	<bean id="contentNegotiationManager"
