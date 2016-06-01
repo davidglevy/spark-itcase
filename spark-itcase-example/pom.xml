@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>solutions.deepfield</groupId>
+	<artifactId>spark-itcase-example</artifactId>
+	<version>1.0.1</version>
+	<packaging>jar</packaging>
+
+	<name>spark-itcase-example</name>
+	<description>An example usage of the spark-itcase-maven project.</description>
+	<url>https://github.com/davidglevy/spark-itcase</url>
+	<scm>
+		<url>https://github.com/davidglevy/spark-itcase</url>
+		<connection>scm:git:git://github.com/davidglevy/spark-itcase.git</connection>
+		<developerConnection>scm:git:git@github.com:davidglevy/spark-itcase.git</developerConnection>
+	</scm>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>David Levy</name>
+			<url>https://github.com/davidglevy</url>
+			<id>davidglevy</id>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.framework.version>3.2.0.RELEASE</spring.framework.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_2.10</artifactId>
+			<version>1.6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-streaming_2.10</artifactId>
+			<version>1.6.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Logging -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.7.4</version>
+		</dependency>
+		<!-- http://mvnrepository.com/artifact/org.apache.spark/spark-streaming-twitter_2.10 -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-streaming-twitter_2.10</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>solutions.deepfield</groupId>
+				<artifactId>spark-itcase-maven</artifactId>
+				<version>1.0.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>sparkItCase</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- These are externalised to settings.xml; when coding -->
+					<!-- on a standard network the proxy is likely different -->
+					<!-- then when doing it remotely where there may be VPC -->
+					<!-- or SSH tunneling -->
+					<endpoint>${spark.itcase.endpoint}</endpoint>
+					<proxyHost>${spark.itcase.proxyHost}</proxyHost>
+					<proxyPort>${spark.itcase.proxyPort}</proxyPort>
+					<!-- TODO Need to find a better way to run multiple classes. -->
+<!-- 					<classToRun>solutions.deepfield.spark.fp.streaming.ExampleStreaming</classToRun> -->
+					<classToRun>solutions.deepfield.spark.fp.inject.Outer</classToRun>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>7</source>
+					<target>7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
