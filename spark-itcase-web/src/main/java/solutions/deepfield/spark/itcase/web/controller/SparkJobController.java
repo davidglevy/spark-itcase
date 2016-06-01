@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import solutions.deepfield.spark.itcase.core.LocalRepository;
 import solutions.deepfield.spark.itcase.core.domain.RunParams;
@@ -30,10 +31,13 @@ import solutions.deepfield.spark.itcase.core.domain.RunResult;
 import solutions.deepfield.spark.itcase.web.util.RunUtil;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.junit.internal.runners.ErrorReportingRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,45 +46,45 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class SparkJobController {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(SparkJobController.class);
+	private static final Logger logger = LoggerFactory.getLogger(SparkJobController.class);
 
 	@Autowired
 	RunUtil runUtil;
-	
+
+	@ExceptionHandler(value = Exception.class)
+	public @ResponseBody RunResult handleException(HttpServletResponse response, Exception e) {
+		response.setStatus(500);
+		String errorMessage = "Error running spark submit job: " + e.getMessage();
+		logger.error(errorMessage, e);
+
+		String errorStack = ExceptionUtils.getFullStackTrace(e);
+		RunResult result = new RunResult();
+		result.setExceptionMessage(errorMessage);
+		result.setExceptionStack(errorStack);
+		return result;
+	}
+
 	@RequestMapping(value = "/spark/run", method = RequestMethod.POST)
-	public @ResponseBody RunResult runJob(@RequestBody RunParams params)
-			throws ServletException {
+	public @ResponseBody RunResult runJob(@RequestBody RunParams params) throws Exception {
 		logger.info("Received: {}", params);
 
 		LocalRepository repo = new LocalRepository();
 		repo.initialize();
 
-		try {
-			String mainJar = repo.buildFile(params.getGroupId(),
-					params.getArtifactId(), params.getVersion());
-			
-			List<String> files = repo.buildFiles(params.getGroupId(),
-					params.getArtifactId(), params.getVersion());
-			
-//			String classpath = "file:/" + StringUtils.join(files, ";file:/");
-//			logger.info("Classpath will be: " + classpath);
+		String mainJar = repo.buildFile(params.getGroupId(), params.getArtifactId(), params.getVersion());
 
-			String classpath = StringUtils.join(files, ",");
-			logger.info("Classpath will be: " + classpath);
+		List<String> files = repo.buildFiles(params.getGroupId(), params.getArtifactId(), params.getVersion());
 
-			
-			RunResult commandResult = runUtil.runCommand("/usr/bin/spark-submit --class " + params.getClassName() + " --jars " + classpath + " " + mainJar);
-			logger.info("Command result was: " + commandResult);
-			commandResult.setJobId(UUID.randomUUID().toString());
-			
-			return commandResult;
-		} catch (Exception e) {
-			throw new ServletException("Unable to build classpath: "
-					+ e.getMessage(), e);
-		}
+		String classpath = StringUtils.join(files, ",");
+		logger.info("Classpath will be: " + classpath);
+
+		RunResult commandResult = runUtil.runCommand(
+				"/usr/bin/spark-submit --class " + params.getClassName() + " --jars " + classpath + " " + mainJar);
+		logger.info("Command result was: " + commandResult);
+		commandResult.setJobId(UUID.randomUUID().toString());
+
+		return commandResult;
 
 	}
-
 
 }

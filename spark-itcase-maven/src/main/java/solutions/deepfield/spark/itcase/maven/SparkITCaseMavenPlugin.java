@@ -37,11 +37,16 @@ import org.apache.maven.project.MavenProject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.GetRequest;
 import com.mashape.unirest.request.HttpRequestWithBody;
 import com.mashape.unirest.request.body.MultipartBody;
 import com.mashape.unirest.request.body.RawBody;
 
+import solutions.deepfield.spark.itcase.core.domain.ApplicationStatusResponse;
 import solutions.deepfield.spark.itcase.core.domain.RunParams;
+import solutions.deepfield.spark.itcase.core.util.AppUtil;
+import solutions.deepfield.spark.itcase.exceptions.SparkITCaseException;
 
 /**
  * Loads the dependencies for the project into the target environment.
@@ -78,6 +83,14 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 	@Parameter
 	private String classToRun;
 	
+	private AppUtil appUtil;
+	
+	private void init() {
+		appUtil = new AppUtil();
+		appUtil.loadProperties();
+		getLog().info("Plugin version is [" + appUtil.getVersion() + "]");
+		getLog().info("Plugin build is [" + appUtil.getTimestamp() + "]");
+	}
 	
 	public void execute() throws MojoExecutionException {
 
@@ -86,6 +99,10 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 			if (StringUtils.isNotBlank(proxyHost)) {
 				Unirest.setProxy(new HttpHost(proxyHost, proxyPort));
 			}
+			
+			init();
+			
+			checkStatus();
 			
 			// Install the artifact in the remote server.
 			getLog().info("Deploying project artifact");
@@ -166,9 +183,39 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 		} catch (Exception e) {
 			getLog().error(e);
 			throw new MojoExecutionException(
-					"Unable to check version on test server for endpoint ["
+					"Error invoking spark itcase server at ["
 							+ endpoint + "]:" + e.getMessage(), e);
 		}
 
 	}
+
+
+	/**
+	 * Perform a status check on the server.
+	 * 
+	 * @throws Exception if the status was not HTTP 200 and a matched version.
+	 */
+	protected void checkStatus() throws Exception {
+		GetRequest request = Unirest.get(endpoint + "/status");
+		request = request.header("Content-Type",
+				"application/json");
+		request = request.header("Accept",
+				"application/json");
+		HttpResponse<String> response = request.asString();
+		if (response.getStatus() == 200) {
+			ObjectMapper mapper = new ObjectMapper();
+			ApplicationStatusResponse status = mapper.readerFor(ApplicationStatusResponse.class).readValue(response.getBody());
+			if (status.getVersion().equals(appUtil.getVersion())) {
+				getLog().info("Matched client-server version [" + status.getVersion() + "]");
+			} else {
+				throw new SparkITCaseException("Server version [" + status.getVersion() + "] does not match client [" + appUtil.getVersion() + "]");
+			}
+			
+			getLog().info("Server running as user [" + status.getUser() + "]");
+			getLog().info("Server uptime [" + status.getUptime() + "]");
+		} else {
+			throw new SparkITCaseException("Unable to retrieve status, received [" + response.getStatus() + "], message [" + response.getStatusText() + "]");
+		}
+	}
+
 }

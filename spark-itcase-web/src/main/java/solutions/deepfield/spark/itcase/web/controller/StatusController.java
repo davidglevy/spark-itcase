@@ -65,7 +65,6 @@ public class StatusController {
 	public @ResponseBody ApplicationStatusResponse status() {
 		ApplicationStatusResponse response = new ApplicationStatusResponse();
 		
-		
 		Period period = new Period(System.currentTimeMillis() - startupTime);
 		response.setUptime(PeriodFormat.getDefault().print(period));
 		response.setUser(System.getProperty("user.name"));
