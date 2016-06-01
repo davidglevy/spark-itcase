@@ -53,7 +53,7 @@ public class RunUtil {
 		PumpStreamHandler handler = new PumpStreamHandler(output);
 		executor.setStreamHandler(handler);
 //
-//		
+		try {
 		executor.execute(cmdLine, resultHandler);
 //		Executor executor = new DefaultExecutor();
 		
@@ -66,8 +66,9 @@ public class RunUtil {
 			resultHandler.waitFor(1000);
 			logger.info("Waited [" + ++duration + "] for result");
 		}
-		
-		result.setLogs(output.getLogs());
+		} finally {
+			result.setLogs(output.getLogs());
+		}
 		
 		ExecuteException e = resultHandler.getException();
 		if (e == null) {

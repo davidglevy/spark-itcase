@@ -33,6 +33,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
@@ -45,6 +46,7 @@ import com.mashape.unirest.request.body.RawBody;
 
 import solutions.deepfield.spark.itcase.core.domain.ApplicationStatusResponse;
 import solutions.deepfield.spark.itcase.core.domain.RunParams;
+import solutions.deepfield.spark.itcase.core.domain.RunResult;
 import solutions.deepfield.spark.itcase.core.util.AppUtil;
 import solutions.deepfield.spark.itcase.exceptions.SparkITCaseException;
 
@@ -175,10 +177,31 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 			RawBody rawBody = requestWithBody.body(dataToSend);
 			getLog().info("About to make request to server");
 			HttpResponse<String> response = rawBody.asString();
-			getLog().info("Request to run complete: " + response.getBody());
-
 			
-			// String requestBody = new
+			// TODO Log response and logs.
+			
+			if (response.getStatus() == 200) {
+				getLog().info("Request to run complete: " + response.getBody());
+			} else {
+				List<String> content = response.getHeaders().get("Content-Type");
+				if (content.size() == 1 && content.get(0).toLowerCase().startsWith("application/json")) {
+					RunResult result = mapper.readerFor(RunResult.class).readValue(response.getBody());
+					
+					// TODO Add in logs.
+					if (result.getLogs() != null && result.getLogs().size() > 0) {
+						for (String log : result.getLogs()) {
+							getLog().error("Server log: " + log);
+						}
+					}
+					
+					getLog().error("Error stack:\n" + result.getExceptionStack());
+					throw new SparkITCaseException("Received error " + result.getExceptionMessage());
+				} else {
+					getLog().error("Unknown error payload content type: " + content);
+					throw new SparkITCaseException("Received error " + response.getStatusText());
+				}
+			}
+
 
 		} catch (Exception e) {
 			getLog().error(e);
