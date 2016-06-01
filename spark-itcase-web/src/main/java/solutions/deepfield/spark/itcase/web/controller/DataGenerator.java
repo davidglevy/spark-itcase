@@ -28,6 +28,8 @@ public class DataGenerator {
 		long currentTime = System.currentTimeMillis() / 1000;
 		
 		int messages = ((int)(currentTime - startTime)) * random.nextInt(5);
+		// Reset the start time so we don't get too many messages.
+		startTime = currentTime;
 		
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < messages; i++) {
