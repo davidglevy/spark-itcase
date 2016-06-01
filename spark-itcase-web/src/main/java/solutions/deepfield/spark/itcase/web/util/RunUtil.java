@@ -95,8 +95,8 @@ public class RunUtil {
 			for (Object o : objects) {
 				textParams.add(o == null ? null : o.toString());
 			}
-			log = log.replaceAll("\\{\\}", "%s");
-			String.format(log, objects);
+			log = log.replaceFirst("\\{\\}", objects[0].toString());
+			log = log.replaceFirst("\\{\\}", objects[1].toString());
 			
 			logs.add(log);
 		}
