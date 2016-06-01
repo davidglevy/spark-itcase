@@ -88,16 +88,8 @@ public class RunUtil {
 
 		private List<String> logs = new ArrayList<>();
 		
-		private void addLog(String log, Object... objects ) {
-			logger.info(log, objects);
-			
-			List<String> textParams = new ArrayList<>();
-			for (Object o : objects) {
-				textParams.add(o == null ? null : o.toString());
-			}
-			log = log.replaceFirst("\\{\\}", objects[0].toString());
-			log = log.replaceFirst("\\{\\}", objects[1].toString());
-			
+		private void addLog(String log) {
+			logger.info(log);
 			logs.add(log);
 		}
 		
@@ -111,16 +103,8 @@ public class RunUtil {
 
 		@Override
 		protected void processLine(String line, int level) {
-			switch (level) {
-			case 0:
-				addLog("Output {}: {}", level, line);
-				break;
-			case 1:
-				addLog("Error {}: {}", level, line);
-				break;
-			default:
-				addLog("Unknown{}: {}", level, line);
-			}
+			// Level doesn't seem to be kept
+			addLog(line);
 
 		}
 
