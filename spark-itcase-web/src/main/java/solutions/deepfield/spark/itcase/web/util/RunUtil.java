@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import solutions.deepfield.spark.itcase.core.domain.RunResult;
+import solutions.deepfield.spark.itcase.web.exception.ExecutionException;
 
 @Component
 public class RunUtil {
@@ -77,7 +78,7 @@ public class RunUtil {
 			
 			return result;
 		} else {
-			throw new Exception("Unable to execute command: " + e.getMessage(),e);
+			throw new ExecutionException("Unable to execute command: " + e.getMessage(),e, result.getLogs());
 		}
 		
 

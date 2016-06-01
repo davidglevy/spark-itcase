@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import solutions.deepfield.spark.itcase.core.LocalRepository;
 import solutions.deepfield.spark.itcase.core.domain.RunParams;
 import solutions.deepfield.spark.itcase.core.domain.RunResult;
+import solutions.deepfield.spark.itcase.web.exception.ExecutionException;
 import solutions.deepfield.spark.itcase.web.util.RunUtil;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +60,10 @@ public class SparkJobController {
 		RunResult result = new RunResult();
 		result.setExceptionMessage(errorMessage);
 		result.setExceptionStack(errorStack);
+		if (ExecutionException.class.isAssignableFrom(e.getClass())){
+			ExecutionException executionException = (ExecutionException) e;
+			result.setLogs(executionException.getLogs());
+		}
 		return result;
 	}
 
