@@ -178,12 +178,22 @@ public class SparkITCaseMavenPlugin extends AbstractMojo {
 			getLog().info("About to make request to server");
 			HttpResponse<String> response = rawBody.asString();
 			
-			// TODO Log response and logs.
-			
+			List<String> content = response.getHeaders().get("Content-Type");
+			if (content.size() == 1 && content.get(0).toLowerCase().startsWith("application/json")) {
+				RunResult result = mapper.readerFor(RunResult.class).readValue(response.getBody());
+				
+				// TODO Add in logs.
+				if (result.getLogs() != null && result.getLogs().size() > 0) {
+					for (String log : result.getLogs()) {
+						getLog().info("Server log: " + log);
+					}
+				}
+			}
+		
 			if (response.getStatus() == 200) {
 				getLog().info("Request to run complete: " + response.getBody());
 			} else {
-				List<String> content = response.getHeaders().get("Content-Type");
+				content = response.getHeaders().get("Content-Type");
 				if (content.size() == 1 && content.get(0).toLowerCase().startsWith("application/json")) {
 					RunResult result = mapper.readerFor(RunResult.class).readValue(response.getBody());
 					
