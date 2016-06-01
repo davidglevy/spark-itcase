@@ -22,7 +22,6 @@ package solutions.deepfield.spark.itcase.web.controller;
 import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import solutions.deepfield.spark.itcase.core.LocalRepository;
@@ -32,7 +31,6 @@ import solutions.deepfield.spark.itcase.web.util.RunUtil;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.junit.internal.runners.ErrorReportingRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
