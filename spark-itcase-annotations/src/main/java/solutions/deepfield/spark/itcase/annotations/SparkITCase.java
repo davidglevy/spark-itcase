@@ -1,4 +1,4 @@
-package solutions.deepfield.spark.itcase.maven;
+package solutions.deepfield.spark.itcase.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

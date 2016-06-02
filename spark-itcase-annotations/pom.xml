@@ -14,14 +14,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>solutions.deepfield</groupId>
-	<artifactId>spark-itcase</artifactId>
+	<artifactId>spark-itcase-annotations</artifactId>
 	<version>1.0.1</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
-	<name>spark-itcase</name>
-	<description>Parent project of spark-itcase, used as the target to build the
-	entire project.</description>
-
+	<name>spark-itcase-annotations</name>
+	<description>Required annotations for use within test projects.</description>
 	<url>https://github.com/davidglevy/spark-itcase</url>
 	<scm>
 		<url>https://github.com/davidglevy/spark-itcase</url>
@@ -45,14 +43,55 @@
 		</developer>
 	</developers>
 
-	<modules>
-		<module>../spark-itcase-annotations</module>
-		<module>../spark-itcase-core</module>
-		<module>../spark-itcase-maven</module>
-		<module>../spark-itcase-web</module>
-	</modules>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<aether.version>1.1.0</aether.version>
+	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>7</source>
+					<target>7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>

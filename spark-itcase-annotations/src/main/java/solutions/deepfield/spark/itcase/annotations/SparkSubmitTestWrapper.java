@@ -1,4 +1,4 @@
-package solutions.deepfield.spark.itcase.maven;
+package solutions.deepfield.spark.itcase.annotations;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

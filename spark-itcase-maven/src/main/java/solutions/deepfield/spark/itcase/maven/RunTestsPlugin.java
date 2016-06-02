@@ -41,6 +41,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 
+import solutions.deepfield.spark.itcase.annotations.SparkSubmitTestWrapper;
 import solutions.deepfield.spark.itcase.exceptions.SparkITCaseException;
 
 /**
@@ -116,7 +117,7 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 		addDependency(dependencyText, dependencyFrag, groupId, project.getArtifactId(), version);
 		// -- The project containing the SparkSubmitTestWrapper
 		// Add this plugin as a dependency so we get annotations and the wrapper.
-		addDependency(dependencyText, dependencyFrag, "solutions.deepfield", "spark-itcase-maven", appUtil.getVersion());
+		addDependency(dependencyText, dependencyFrag, "solutions.deepfield", "spark-itcase-annotations", appUtil.getVersion());
 		
 		
 		String pomTemplate = null;
