@@ -41,7 +41,7 @@
 		<!-- TODO Move the annotations used here into a separate project -->
 		<dependency>
 			<groupId>solutions.deepfield</groupId>
-			<artifactId>spark-itcase-maven</artifactId>
+			<artifactId>spark-itcase-annotations</artifactId>
 			<version>1.0.1</version>
 		</dependency>
 		<dependency>

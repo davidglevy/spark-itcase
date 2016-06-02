@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 
 import solutions.deepfield.spark.itcase.annotations.SparkSubmitTestWrapper;
+import solutions.deepfield.spark.itcase.annotations.SparkTest;
 import solutions.deepfield.spark.itcase.exceptions.SparkITCaseException;
 
 /**
@@ -147,9 +149,18 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 			getLog().info("Running test class [" + testClass + "]");
 			// TODO Add inner method to run each annotated test method in class.
 			// Invoke spark/run with SparkSubmitWrapper; main JAR is ???
-			List<String> parameters = new ArrayList<>();
-			parameters.add(testClass.getCanonicalName());
-			runUtil.run(SparkSubmitTestWrapper.class.getCanonicalName(), parameters, artifactId, groupId, version);
+			
+			for (Method m : testClass.getMethods()) {
+				if (m.getAnnotation(SparkTest.class) != null) {
+					String methodName = m.getName();
+					getLog().info("Found test method [" + methodName + "]");
+					List<String> parameters = new ArrayList<>();
+					parameters.add(testClass.getCanonicalName());
+					parameters.add(methodName);
+					runUtil.run(SparkSubmitTestWrapper.class.getCanonicalName(), parameters, artifactId, groupId, version);
+				}
+			}
+			
 			
 		}
 		
