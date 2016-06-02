@@ -38,6 +38,12 @@
 	</properties>
 
 	<dependencies>
+		<!-- TODO Move the annotations used here into a separate project -->
+		<dependency>
+			<groupId>solutions.deepfield</groupId>
+			<artifactId>spark-itcase-maven</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.10</artifactId>
@@ -95,7 +101,7 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>sparkItCase</goal>
+							<goal>runTests</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -108,8 +114,8 @@
 					<proxyHost>${spark.itcase.proxyHost}</proxyHost>
 					<proxyPort>${spark.itcase.proxyPort}</proxyPort>
 					<!-- TODO Need to find a better way to run multiple classes. -->
-<!-- 					<classToRun>solutions.deepfield.spark.fp.streaming.ExampleStreaming</classToRun> -->
-					<classToRun>solutions.deepfield.spark.fp.inject.Outer</classToRun>
+					<!-- <classToRun>solutions.deepfield.spark.fp.streaming.ExampleStreaming</classToRun> -->
+<!-- 					<classToRun>solutions.deepfield.spark.fp.inject.Outer</classToRun> -->
 				</configuration>
 			</plugin>
 			<plugin>
