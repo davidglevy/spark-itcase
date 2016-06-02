@@ -3,7 +3,7 @@ package solutions.deepfield.spark.fp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import solutions.deepfield.spark.itcase.maven.SparkITCase;
+import solutions.deepfield.spark.itcase.annotations.SparkITCase;
 
 @SparkITCase
 public class ExampleSparkITCase {

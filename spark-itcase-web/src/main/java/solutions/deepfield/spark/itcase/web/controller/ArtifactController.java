@@ -65,8 +65,12 @@ public class ArtifactController {
 
 		response.setContentType("text/plain");
 
-		repo.retrieveArtifact(params.getGroupId(), params.getArtifactId(),
-				params.getVersion(), response.getOutputStream());
+		// Temporarily remove deployment off our own code on the test run as it's not yet
+		// in central and this will fail.
+		if (!params.getGroupId().equalsIgnoreCase("solutions.deepfield")) {
+			repo.retrieveArtifact(params.getGroupId(), params.getArtifactId(),
+					params.getVersion(), response.getOutputStream());
+		}
 	}
 
 	@RequestMapping(value = "/artifact/deploy", method = { RequestMethod.POST })
