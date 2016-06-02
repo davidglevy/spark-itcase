@@ -47,8 +47,7 @@ import solutions.deepfield.spark.itcase.core.domain.LoadParams;
 @Controller
 public class ArtifactController {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ArtifactController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ArtifactController.class);
 
 	@PostConstruct
 	public void postConstruct() {
@@ -56,8 +55,8 @@ public class ArtifactController {
 	}
 
 	@RequestMapping("/artifact/retrieve")
-	public void retrieve(LoadParams params, BindingResult binding,
-			HttpServletResponse response) throws IOException, ServletException {
+	public void retrieve(LoadParams params, BindingResult binding, HttpServletResponse response)
+			throws IOException, ServletException {
 		logger.info("processing [" + params + "]");
 
 		LocalRepository repo = new LocalRepository();
@@ -65,16 +64,12 @@ public class ArtifactController {
 
 		response.setContentType("text/plain");
 
-		// Temporarily remove deployment off our own code on the test run as it's not yet
-		// in central and this will fail.
-		if (!params.getGroupId().equalsIgnoreCase("solutions.deepfield")) {
-			repo.retrieveArtifact(params.getGroupId(), params.getArtifactId(),
-					params.getVersion(), response.getOutputStream());
-		}
+		repo.retrieveArtifact(params.getGroupId(), params.getArtifactId(), params.getVersion(),
+				response.getOutputStream());
 	}
 
 	@RequestMapping(value = "/artifact/deploy", method = { RequestMethod.POST })
-	public void deploy(HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+	public void deploy(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		if (ServletFileUpload.isMultipartContent(request)) {
 
 			// Create a factory for disk-based file items
@@ -124,7 +119,6 @@ public class ArtifactController {
 				errorOut(response, "version parameter can not be blank");
 			}
 
-
 			// Extract the file and the artifactId, groupId and versionId.
 
 			LocalRepository repo = new LocalRepository();
@@ -141,7 +135,7 @@ public class ArtifactController {
 
 		} else {
 			errorOut(response, "Was expecting a multipart form upload");
-			
+
 		}
 
 		response.setStatus(200);
@@ -154,7 +148,6 @@ public class ArtifactController {
 		errorOut(response, message, null);
 	}
 
-	
 	private void errorOut(HttpServletResponse response, String message, Throwable t) throws IOException {
 		response.setStatus(500);
 		response.setContentType("text/plain");
