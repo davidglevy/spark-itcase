@@ -107,7 +107,7 @@ public class EmbeddedJetty {
 	private static WebApplicationContext getContext() {
 		XmlWebApplicationContext context = new XmlWebApplicationContext();
 		context.setConfigLocations("classpath:spark-itcase-servlet.xml");
-		// context.start();
+		context.start();
 		return context;
 
 		// AnnotationConfigWebApplicationContext context = new
