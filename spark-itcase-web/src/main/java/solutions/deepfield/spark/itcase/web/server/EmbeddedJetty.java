@@ -74,7 +74,8 @@ public class EmbeddedJetty {
 	private void startJetty(int port) throws Exception {
 		logger.info("Configuring Spring Context");
 		WebApplicationContext context = getContext();
-		ConfigUtil config = context.getBean(ConfigUtil.class);
+		ConfigUtil config = new ConfigUtil();
+		config.init();
 		
 		
 		logger.info("Creating Jetty");
@@ -107,7 +108,7 @@ public class EmbeddedJetty {
 	private static WebApplicationContext getContext() {
 		XmlWebApplicationContext context = new XmlWebApplicationContext();
 		context.setConfigLocations("classpath:spark-itcase-servlet.xml");
-		context.start();
+		//context.start();
 		return context;
 
 		// AnnotationConfigWebApplicationContext context = new
