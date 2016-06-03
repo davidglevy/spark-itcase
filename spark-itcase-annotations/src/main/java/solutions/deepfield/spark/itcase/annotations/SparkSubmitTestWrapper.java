@@ -1,6 +1,8 @@
 package solutions.deepfield.spark.itcase.annotations;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,14 +34,57 @@ public class SparkSubmitTestWrapper {
 				throw new Exception("Unable to find test method [" + method + "] with zero arguments");
 			}
 			
-			Object instance = testClass.newInstance();
+			List<Method> befores = new ArrayList<Method>();
+			Class examineTarget = testClass;
 			
 			// Look for before methods.
+			while (examineTarget != null) {
+				for (Method m : testClass.getMethods()) {
+					if (m.getParameterTypes().length > 0) {
+						throw new Exception("Found @SparkBefore annotation on method with arguments");
+					}
+					if (m.getAnnotation(SparkBefore.class) != null) {
+						befores.add(m);
+					}
+				}
+				examineTarget = examineTarget.getSuperclass();
+			}
 
 			// Look for after methods.
+			List<Method> afters = new ArrayList<Method>();
+			examineTarget = testClass;
+			while (examineTarget != null) {
+				for (Method m : testClass.getMethods()) {
+					if (m.getParameterTypes().length > 0) {
+						throw new Exception("Found @SparkAfter annotation on method with arguments");
+					}
+					if (m.getAnnotation(SparkAfter.class) != null) {
+						afters.add(m);
+					}
+				}
+				examineTarget = examineTarget.getSuperclass();
+			}
+			
+			
+			Object instance = testClass.newInstance();
 
+			// Invoke befores
+			for (Method before : befores) {
+				logger.info("Invoking before method [" + before.getDeclaringClass() + "#" + before.getName() + "]");
+				before.invoke(instance);
+				logger.info("Finished before method [" + before.getDeclaringClass() + "#" + before.getName() + "]");
+			}
+			
 			// Execute the test method.
 			method.invoke(instance);
+			
+			// Invoke afters
+			for (Method after : afters) {
+				logger.info("Invoking after method [" + after.getDeclaringClass() + "#" + after.getName() + "]");
+				after.invoke(instance);
+				logger.info("Finished after method [" + after.getDeclaringClass() + "#" + after.getName() + "]");
+			}
+
 		} catch (Exception e) {
 			logger.error("Error processing command: " + e.getMessage(), e);
 			System.exit(10);

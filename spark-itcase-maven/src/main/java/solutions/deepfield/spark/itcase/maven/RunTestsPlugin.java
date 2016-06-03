@@ -58,7 +58,7 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 	@Parameter(property = "maven.compiler.testTarget")
 	private String testTarget;
 
-	@Parameter(property = "threads", defaultValue = "5")
+	@Parameter
 	private int threadCount = 5;
 
 	@Override
@@ -184,6 +184,7 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 			t.start();
 		}
 		latch.await();
+		Unirest.shutdown();
 
 		// TODO Add in thread error logging.
 

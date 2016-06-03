@@ -113,6 +113,8 @@
 					<endpoint>${spark.itcase.endpoint}</endpoint>
 					<proxyHost>${spark.itcase.proxyHost}</proxyHost>
 					<proxyPort>${spark.itcase.proxyPort}</proxyPort>
+					<!-- Default here is 5; we see some interrupted exceptions if we go much above that in YARN. -->
+					<!-- <threadCount>10</threadCount> -->
 					<!-- TODO Need to find a better way to run multiple classes. -->
 					<!-- <classToRun>solutions.deepfield.spark.fp.streaming.ExampleStreaming</classToRun> -->
 <!-- 					<classToRun>solutions.deepfield.spark.fp.inject.Outer</classToRun> -->

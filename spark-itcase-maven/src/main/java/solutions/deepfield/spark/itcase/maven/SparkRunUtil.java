@@ -66,8 +66,10 @@ public class SparkRunUtil {
 		}
 
 		if (response.getStatus() == 200) {
-			log.info("Request to run complete: " + response.getBody());
+			log.info("Request to run complete");
 		} else {
+			log.info("Request to run had error [" + response.getStatus() + "]");
+
 			content = response.getHeaders().get("Content-Type");
 			if (content.size() == 1 && content.get(0).toLowerCase().startsWith("application/json")) {
 				RunResult result = mapper.readerFor(RunResult.class).readValue(response.getBody());
