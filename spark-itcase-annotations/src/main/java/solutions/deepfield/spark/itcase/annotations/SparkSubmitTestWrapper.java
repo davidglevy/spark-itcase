@@ -1,5 +1,7 @@
 package solutions.deepfield.spark.itcase.annotations;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +26,20 @@ public class SparkSubmitTestWrapper {
 			logger.info("Loaded test class");
 			
 			// Get the test method name from second argument.
-
+			String methodToTest = args[1];
+			Method method = testClass.getMethod(methodToTest);
+			if (method == null) {
+				throw new Exception("Unable to find test method [" + method + "] with zero arguments");
+			}
+			
+			Object instance = testClass.newInstance();
+			
 			// Look for before methods.
 
 			// Look for after methods.
 
-			// Loop through each test, executing all befores, the test then all
-			
-			// afters.
+			// Execute the test method.
+			method.invoke(instance);
 		} catch (Exception e) {
 			logger.error("Error processing command: " + e.getMessage(), e);
 			System.exit(10);

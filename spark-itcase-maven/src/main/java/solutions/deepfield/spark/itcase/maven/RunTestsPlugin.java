@@ -190,7 +190,7 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 	    compressDirectoryToZipfile(sourceDir, sourceDir, zipFile);
 	    
 	    // Add in a manifest.
-	    ZipEntry entry = new ZipEntry("META-INF" + File.separator + "MANIFEST.MF");
+	    ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
 	    zipFile.putNextEntry(entry);
 	    String text = "Manifest-Version: 1.0\nTool: sparkItCase";
 	    zipFile.write(text.getBytes());
@@ -210,7 +210,7 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 	        if (file.isDirectory()) {
 	            compressDirectoryToZipfile(rootDir, sourceDir + File.separator + file.getName(), out);
 	        } else {
-	            ZipEntry entry = new ZipEntry(sourceDir.replace(rootDir, "") + file.getName());
+	            ZipEntry entry = new ZipEntry(sourceDir.replace(rootDir + File.separator, "").replaceAll("\\\\",  "/") + "/" + file.getName());
 	            out.putNextEntry(entry);
 	            
 	            FileInputStream in = new FileInputStream(sourceDir + File.separator + file.getName());

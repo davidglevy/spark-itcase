@@ -3,6 +3,7 @@ package solutions.deepfield.spark.fp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import solutions.deepfield.spark.fp.inject.Outer;
 import solutions.deepfield.spark.itcase.annotations.SparkITCase;
 import solutions.deepfield.spark.itcase.annotations.SparkTest;
 
@@ -13,7 +14,9 @@ public class ExampleSparkITCase {
 	
 	@SparkTest
 	public void hello() {
-		logger.info("World");
+		logger.info("Hello World from test method");
+		
+		Outer.main(new String[] {});
 	}
 	
 }
