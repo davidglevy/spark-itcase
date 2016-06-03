@@ -38,6 +38,8 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import solutions.deepfield.spark.itcase.web.util.ConfigUtil;
+
 public class EmbeddedJetty {
 
 	private static final Logger logger = LoggerFactory.getLogger(EmbeddedJetty.class);
@@ -70,11 +72,16 @@ public class EmbeddedJetty {
 	}
 
 	private void startJetty(int port) throws Exception {
+		logger.info("Configuring Spring Context");
+		WebApplicationContext context = getContext();
+		ConfigUtil config = context.getBean(ConfigUtil.class);
+		
+		
 		logger.info("Creating Jetty");
-		Server server = new Server(port);
+		Server server = new Server(config.getPort());
 
 		logger.info("Initializing Jetty Spring context");
-		server.setHandler(getServletContextHandler(getContext()));
+		server.setHandler(getServletContextHandler(context));
 		logger.info("Starting Jetty Server");
 		server.start();
 		logger.info("Joining Jetty Server");
