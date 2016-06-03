@@ -40,12 +40,13 @@ public class SparkSubmitTestWrapper {
 			// Look for before methods.
 			while (examineTarget != null) {
 				for (Method m : testClass.getMethods()) {
+					if (m.getAnnotation(SparkBefore.class) == null) {
+						continue;
+					}
 					if (m.getParameterTypes().length > 0) {
 						throw new Exception("Found @SparkBefore annotation on method with arguments");
 					}
-					if (m.getAnnotation(SparkBefore.class) != null) {
-						befores.add(m);
-					}
+					befores.add(m);
 				}
 				examineTarget = examineTarget.getSuperclass();
 			}
@@ -55,12 +56,13 @@ public class SparkSubmitTestWrapper {
 			examineTarget = testClass;
 			while (examineTarget != null) {
 				for (Method m : testClass.getMethods()) {
+					if (m.getAnnotation(SparkAfter.class) == null) {
+						continue;
+					}
 					if (m.getParameterTypes().length > 0) {
 						throw new Exception("Found @SparkAfter annotation on method with arguments");
 					}
-					if (m.getAnnotation(SparkAfter.class) != null) {
-						afters.add(m);
-					}
+					afters.add(m);
 				}
 				examineTarget = examineTarget.getSuperclass();
 			}
