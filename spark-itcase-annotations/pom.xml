@@ -15,7 +15,7 @@
 
 	<groupId>solutions.deepfield</groupId>
 	<artifactId>spark-itcase-annotations</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<packaging>jar</packaging>
 
 	<name>spark-itcase-annotations</name>
