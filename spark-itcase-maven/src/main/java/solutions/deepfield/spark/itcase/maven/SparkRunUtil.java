@@ -3,6 +3,7 @@ package solutions.deepfield.spark.itcase.maven;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,6 +43,16 @@ public class SparkRunUtil {
 		log.info("About to make request to server");
 		HttpResponse<String> response = rawBody.asString();
 
+		handleResponse(jobClass, params1, response);
+	}
+
+	private synchronized void handleResponse(String jobClass, List<String> params1, HttpResponse<String> response)
+			throws IOException, JsonProcessingException {
+		log.info("Handling response for [" + jobClass + "] with [" + StringUtils.join(params1, ",") + "]");
+		
+		ObjectMapper mapper = new ObjectMapper();
+
+		
 		List<String> content = response.getHeaders().get("Content-Type");
 		if (content.size() == 1 && content.get(0).toLowerCase().startsWith("application/json")) {
 			RunResult result = mapper.readerFor(RunResult.class).readValue(response.getBody());
