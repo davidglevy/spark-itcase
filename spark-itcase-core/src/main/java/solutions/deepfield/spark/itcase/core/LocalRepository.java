@@ -69,7 +69,7 @@ public class LocalRepository {
 	public void initialize() {
 		system = Booter.newRepositorySystem();
 	}
-
+	
 	/**
 	 * Load a dependency from our Maven subsystem.
 	 * 
@@ -206,6 +206,7 @@ public class LocalRepository {
 		DependencyResult dependencyResult = system.resolveDependencies(session, artifactRequest);
 
 		for (ArtifactResult artifactResult : dependencyResult.getArtifactResults()) {
+			
 
 			resultPaths.add(artifactResult.getArtifact().getFile().getAbsolutePath());
 		}

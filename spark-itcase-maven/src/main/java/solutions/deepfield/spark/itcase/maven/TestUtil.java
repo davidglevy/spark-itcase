@@ -12,8 +12,26 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.RepositoryException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.CollectResult;
+import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactDescriptorException;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResult;
 
 import solutions.deepfield.spark.itcase.annotations.SparkITCase;
+import solutions.deepfield.spark.itcase.core.util.Booter;
 
 public class TestUtil {
 
@@ -25,11 +43,34 @@ public class TestUtil {
 	
 	private List<Class> testClasses;
 	
-	public void init() throws MalformedURLException, ClassNotFoundException {
+    private RepositorySystem repoSystem;
+    
+    private RepositorySystemSession repoSession;
+    
+    private List<RemoteRepository> projectRepos;
+    
+    private List<RemoteRepository> pluginRepos;
+	
+    private MavenProject project;
+    
+    private URLClassLoader classLoader;
+    
+	public void init() throws Exception {
 		if (testTarget == null) {
 			testTarget = buildDir + File.separator + "test-classes";
 		}
 		log.info("Target directory is [" + testTarget + "]");
+		
+		List<String> files = buildFiles(project.getGroupId(), project.getArtifactId(), project.getVersion());
+		log.info("Found deps [" + files.size() + "]");
+		
+		URL[] urls = new URL[files.size()];
+		for (int i = 0; i < urls.length; i++) {
+			urls[i] = new File(files.get(i)).toURL();
+			log.info("Found classpath entry " + urls[i]);
+		}
+				
+		classLoader = new URLClassLoader(urls, null);
 		
 		testClasses = findTestClasses();
 		if (testClasses.isEmpty()) {
@@ -38,6 +79,53 @@ public class TestUtil {
 			log.info("Found [" + testClasses.size() + "] test classes");
 		}
 	}
+	
+	public List<String> buildFiles(String groupId, String artifactId, String version)
+			throws RepositoryException, ArtifactDescriptorException {
+
+		Artifact artifact = new DefaultArtifact(groupId + ":" + artifactId + ":" + version);
+
+		ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
+		descriptorRequest.setArtifact(artifact);
+		descriptorRequest.setRepositories(Booter.newRepositories(repoSystem, repoSession));
+		ArtifactDescriptorResult descriptorResult = repoSystem.readArtifactDescriptor(repoSession, descriptorRequest);
+
+		CollectRequest request = new CollectRequest();
+		request.setRootArtifact(artifact);
+		// request.setRepositories(repositories);
+		request.setDependencies(descriptorResult.getDependencies());
+		request.setManagedDependencies(descriptorResult.getManagedDependencies());
+
+		CollectResult result = repoSystem.collectDependencies(repoSession, request);
+		List<String> resultPaths = new ArrayList<String>();
+
+		// Dependency dependency = new Dependency(artifact,"compile");//,
+		// "runtime");
+		// DefaultDependencyNode root = new DefaultDependencyNode(dependency);
+		DependencyRequest artifactRequest = new DependencyRequest(result.getRoot(), new DependencyFilter() {
+
+			@Override
+			public boolean accept(DependencyNode node, List<DependencyNode> parents) {
+				if (node.getDependency() == null) {
+					return true;
+				}
+				//String scope = node.getDependency().getScope();
+				//return StringUtils.isBlank(scope)
+				//		|| (!scope.equalsIgnoreCase("provided") && !scope.equalsIgnoreCase("test"));
+				return true;
+			}
+		});
+
+		// artifactRequest.setCollectRequest(request);
+		DependencyResult dependencyResult = repoSystem.resolveDependencies(repoSession, artifactRequest);
+
+		for (ArtifactResult artifactResult : dependencyResult.getArtifactResults()) {
+			resultPaths.add(artifactResult.getArtifact().getFile().getAbsolutePath());
+		}
+
+		return resultPaths;
+	}
+
 	
 	public boolean hasTests() {
 		return testClasses.size() > 0;
@@ -52,7 +140,7 @@ public class TestUtil {
 		URL[] urls = new URL[] { url };
 
 		// load this folder into Class loader
-		ClassLoader cl = new URLClassLoader(urls, this.getClass().getClassLoader());
+		ClassLoader cl = new URLClassLoader(urls, classLoader);
 
 		Collection<File> classFiles = listFiles(file);
 		
@@ -62,6 +150,9 @@ public class TestUtil {
 			String path = classFile.getAbsolutePath();
 			log.info("Found [" + path + "]");
 			if (!path.endsWith(".class")) {
+				continue;
+			} else if (path.indexOf("$") != -1) {
+				// Skip generated inner classes.
 				continue;
 			}
 			
@@ -75,21 +166,14 @@ public class TestUtil {
 			
 			if (cls.getAnnotation(SparkITCase.class) != null) {
 				log.info("Could not find test annotation on [" + cls.getCanonicalName() + "]");
-				
-				testClasses.add(cls);
 			} else {
 				log.info("Found test annotation on [" + cls.getCanonicalName() + "]");
+				testClasses.add(cls);
 			}
 			
 		}
 		
 		return testClasses;
-	}
-	
-	
-	public void distribute() {
-		// TODO Implement this after lunch today.
-		
 	}
 	
 	
@@ -140,8 +224,24 @@ public class TestUtil {
 		return testClasses;
 	}
 
+	public void setRepoSystem(RepositorySystem repoSystem) {
+		this.repoSystem = repoSystem;
+	}
 
+	public void setRepoSession(RepositorySystemSession repoSession) {
+		this.repoSession = repoSession;
+	}
 
-	
-	
+	public void setProjectRepos(List<RemoteRepository> projectRepos) {
+		this.projectRepos = projectRepos;
+	}
+
+	public void setPluginRepos(List<RemoteRepository> pluginRepos) {
+		this.pluginRepos = pluginRepos;
+	}
+
+	public void setProject(MavenProject project) {
+		this.project = project;
+	}
+
 }

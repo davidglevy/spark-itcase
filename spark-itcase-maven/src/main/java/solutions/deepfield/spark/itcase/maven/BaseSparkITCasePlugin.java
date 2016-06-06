@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -37,6 +38,9 @@ public class BaseSparkITCasePlugin extends AbstractMojo{
 	@Parameter(property = "project")
 	protected MavenProject project = null;
 
+	@Parameter( defaultValue = "${session}", readonly = true )
+    protected MavenSession session;
+	
 	// @Parameter(property = "spark.itcase.endpoint")
 	@Parameter
 	protected String endpoint;
@@ -67,6 +71,8 @@ public class BaseSparkITCasePlugin extends AbstractMojo{
 		appUtil.loadProperties();
 		getLog().info("Plugin version is [" + appUtil.getVersion() + "]");
 		getLog().info("Plugin build is [" + appUtil.getTimestamp() + "]");
+		
+		
 		
 		deployUtil = new DeployUtil();
 		deployUtil.setEndpoint(endpoint);

@@ -48,7 +48,7 @@ public class SparkRunUtil {
 
 	private synchronized void handleResponse(String jobClass, List<String> params1, HttpResponse<String> response)
 			throws IOException, JsonProcessingException {
-		log.info("Handling response for [" + jobClass + "] with [" + StringUtils.join(params1, ",") + "]");
+		log.info("Handling response for [" + jobClass + "] with parameters [" + StringUtils.join(params1, ",") + "]");
 		
 		ObjectMapper mapper = new ObjectMapper();
 

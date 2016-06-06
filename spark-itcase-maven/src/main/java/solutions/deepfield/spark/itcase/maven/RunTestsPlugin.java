@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +38,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.impl.RemoteRepositoryManager;
+import org.eclipse.aether.repository.RemoteRepository;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -52,12 +60,41 @@ import solutions.deepfield.spark.itcase.exceptions.SparkITCaseException;
 /**
  * Loads the dependencies for the project into the target environment.
  */
-@Mojo(name = "runTests", defaultPhase = LifecyclePhase.INTEGRATION_TEST)
+@Mojo(name = "runTests", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.TEST)
 public class RunTestsPlugin extends BaseSparkITCasePlugin {
 
 	@Parameter(property = "maven.compiler.testTarget")
 	private String testTarget;
 
+	/**
+     * The entry point to Aether, i.e. the component doing all the work.
+     * 
+     * @component
+     */
+	@Component
+    private RepositorySystem repoSystem;
+    
+    /**
+     * The current repository/network configuration of Maven.
+     * 
+     */
+    @Parameter(defaultValue="${repositorySystemSession}",readonly=true)
+    private RepositorySystemSession repoSession;
+    
+    /**
+     * The project's remote repositories to use for the resolution of project dependencies.
+     * 
+     */
+    @Parameter(defaultValue="${project.remoteProjectRepositories}",readonly=true)
+    private List<RemoteRepository> projectRepos;
+    
+    /**
+     * The project's remote repositories to use for the resolution of plugins and their dependencies.
+     * 
+     */
+    @Parameter(defaultValue="${project.remotePluginRepositories}",readonly=true)
+    private List<RemoteRepository> pluginRepos;
+	
 	@Parameter
 	private int threadCount = 5;
 
@@ -68,6 +105,12 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 		testUtil.setBuildDir(buildDir);
 		testUtil.setTestTarget(testTarget);
 		testUtil.setLog(getLog());
+		testUtil.setProject(project);
+		testUtil.setPluginRepos(pluginRepos);
+		testUtil.setProjectRepos(projectRepos);
+		testUtil.setRepoSession(repoSession);
+		testUtil.setRepoSystem(repoSystem);
+
 		testUtil.init();
 
 		if (!testUtil.hasTests()) {
@@ -155,14 +198,17 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 			// Invoke spark/run with SparkSubmitWrapper; main JAR is ???
 
 			for (Method m : testClass.getMethods()) {
-				if (m.getAnnotation(SparkTest.class) != null) {
+				getLog().info("Found method " + m.getName());
+				// We have to do this in case the class loader has 2 copies of the class.
+				//if (m.getAnnotation(SparkTest.class) != null) {
+				if (findTestAnnotation(m)) {
 					String methodName = m.getName();
 					getLog().info("Found test method [" + methodName + "]");
 					List<String> parameters = new ArrayList<>();
 					parameters.add(testClass.getCanonicalName());
 					parameters.add(methodName);
 					listOfTests.add(parameters);
-				}
+				} 
 			}
 
 		}
@@ -190,6 +236,15 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 
 	}
 
+	public boolean findTestAnnotation(Method m) {
+		for (Annotation a : m.getAnnotations()) {
+			if (a.annotationType().getCanonicalName().equals(SparkTest.class.getCanonicalName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void addDependency(StringBuilder dependencyText, String dependencyFrag, String groupId, String artifactId,
 			String version) throws Exception {
 		String modFrag = dependencyFrag.replace("@GROUP_ID@", groupId);
