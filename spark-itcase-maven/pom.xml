@@ -15,7 +15,7 @@
 
 	<groupId>solutions.deepfield</groupId>
 	<artifactId>spark-itcase-maven</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>spark-itcase-maven</name>
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>solutions.deepfield</groupId>
 			<artifactId>spark-itcase-core</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.4</version>
 		</dependency>
 
 		<!-- Maven interaction -->
