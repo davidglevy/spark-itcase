@@ -198,7 +198,6 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 			// Invoke spark/run with SparkSubmitWrapper; main JAR is ???
 
 			for (Method m : testClass.getMethods()) {
-				getLog().info("Found method " + m.getName());
 				// We have to do this in case the class loader has 2 copies of the class.
 				//if (m.getAnnotation(SparkTest.class) != null) {
 				if (findTestAnnotation(m)) {

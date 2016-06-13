@@ -35,6 +35,9 @@ public class ConfigUtil {
 			logger.info("Spark port will run on [" + config.getPort() + "]");
 		}
 		
+		if ("true".equals(System.getProperty("sparkITCase.local"))) {
+			return;
+		}
 		if (StringUtils.isBlank(config.getSparkCommand())) {
 			throw new SparkITCaseException("No spark command specified");
 		} else {
