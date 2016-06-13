@@ -4,16 +4,24 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import solutions.deepfield.spark.itcase.core.domain.RunResult;
+import solutions.deepfield.spark.itcase.exceptions.SparkITCaseException;
 import solutions.deepfield.spark.itcase.web.util.RunUtil;
-
 import static org.junit.Assert.*;
 
 public class RunUtilTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(RunUtilTest.class);
 	
-	@Test(expected=Exception.class)
+	//@Test(expected=Exception.class)
+	@Test
 	public void testNonExistent() throws Exception {
+		logger.info("Here");
+		fail("Test failure");
+		
 		RunUtil util = new RunUtil();
 		if (SystemUtils.IS_OS_WINDOWS) {
 			util.runCommand("C:\\Temp\\hello_world_2.bat");			
@@ -26,6 +34,7 @@ public class RunUtilTest {
 	}
 	@Test
 	public void testExists() throws Exception {
+		logger.info("Here");
 		RunUtil util = new RunUtil();
 		
 		if (SystemUtils.IS_OS_WINDOWS) {
@@ -39,5 +48,7 @@ public class RunUtilTest {
 		} else {
 			fail("No system tests for operating system [" + SystemUtils.OS_NAME + "]");
 		}
+		
+		throw new SparkITCaseException("here is an unexpected exception");
 	}
 }
