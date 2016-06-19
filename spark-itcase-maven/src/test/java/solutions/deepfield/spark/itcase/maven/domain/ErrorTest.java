@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import static junit.framework.Assert.*;
+import static solutions.deepfield.spark.itcase.maven.test.TestUtil.*;
 
 public class ErrorTest {
 
@@ -15,10 +16,9 @@ public class ErrorTest {
 		
 		assertTrue(StringUtils.isNotBlank(result));
 		String expectedStart = "<error message=\"This is a test message\" type=\"java.lang.Throwable\"><![CDATA[";
-		String start = trimmed.substring(0, expectedStart.length());
-		assertEquals(expectedStart, start);
+		assertStartsWith(expectedStart, result);
 		String expectedTail = "]]></error>";
-		assertEquals(expectedTail, trimmed.substring(trimmed.length() - expectedTail.length()));
+		assertEndsWith(expectedTail, result);
 	}
 	
 }

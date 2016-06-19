@@ -1,5 +1,8 @@
 package solutions.deepfield.spark.itcase.maven.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import solutions.deepfield.spark.itcase.exceptions.SparkITCaseException;
 
 public class TestSuite {
@@ -8,8 +11,25 @@ public class TestSuite {
 	
 	private long endTime;
 	
+	private List<TestCase> testCases = new ArrayList<>();
+	
 	public TestSuite() {
 		
+	}
+	
+	public String render() {
+		endTime = System.currentTimeMillis();
+		
+		StringBuilder result = new StringBuilder("<testsuite>\n");
+		for (TestCase testCase : testCases) {
+			result.append(testCase.render());
+		}
+		
+		return result.toString();
+	}
+	
+	public void addTestCase(TestCase input) {
+		this.testCases.add(input);
 	}
 	
 	public void markComplete() {
@@ -17,15 +37,33 @@ public class TestSuite {
 	}
 	
 	protected int getFailures() {
-		throw new SparkITCaseException("Not Yet Implemented"); 
+		int count = 0;
+		for (TestCase testCase : testCases) {
+			if (testCase.hasFailure()) {
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	protected int getErrors() {
-		throw new SparkITCaseException("Not Yet Implemented"); 
+		int count = 0;
+		for (TestCase testCase : testCases) {
+			if (testCase.hasError()) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	protected int getSkipped() {
-		throw new SparkITCaseException("Not Yet Implemented");
+		int count = 0;
+		for (TestCase testCase : testCases) {
+			if (testCase.isSkipped()) {
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	

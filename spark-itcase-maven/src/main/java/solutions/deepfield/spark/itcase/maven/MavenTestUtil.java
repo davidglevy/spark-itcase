@@ -33,7 +33,7 @@ import org.eclipse.aether.resolution.DependencyResult;
 import solutions.deepfield.spark.itcase.annotations.SparkITCase;
 import solutions.deepfield.spark.itcase.core.util.Booter;
 
-public class TestUtil {
+public class MavenTestUtil {
 
 	private Log log;
 	

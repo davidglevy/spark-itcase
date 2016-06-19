@@ -101,7 +101,7 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 	@Override
 	public void postExecute() throws Exception {
 
-		TestUtil testUtil = new TestUtil();
+		MavenTestUtil testUtil = new MavenTestUtil();
 		testUtil.setBuildDir(buildDir);
 		testUtil.setTestTarget(testTarget);
 		testUtil.setLog(getLog());

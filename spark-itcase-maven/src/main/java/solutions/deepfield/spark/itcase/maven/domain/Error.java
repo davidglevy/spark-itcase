@@ -10,6 +10,8 @@ public class Error {
 	
 	private String body;
 
+	private String element = "error";
+	
 	public Error(Throwable t) {
 		message = t.getMessage();
 		type = t.getClass().getCanonicalName();
@@ -24,14 +26,20 @@ public class Error {
 	}
 
 	public String render() {
-		StringBuilder b = new StringBuilder("<error message=\"");
+		
+		
+		StringBuilder b = new StringBuilder("<" + element + " message=\"");
 		b.append(message);
 		b.append("\" type=\"");
 		b.append(type);
 		b.append("\"><![CDATA[");
 		b.append(body);
-		b.append("]]></error>");
+		b.append("]]></" + element + ">\n");
 		return b.toString();
+	}
+
+	public void setElement(String element) {
+		this.element = element;
 	}
 	
 	

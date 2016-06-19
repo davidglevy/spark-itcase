@@ -17,9 +17,13 @@ public class TestCase {
 	
 	private Error error;
 	
+	private Error failure;
+	
 	private String systemOut;
 	
 	private String systemErr;
+	
+	private boolean skipped;
 	
 	public TestCase(String name, String className) {
 		super();
@@ -32,36 +36,48 @@ public class TestCase {
 	}
 
 	public String render() {
-		if (endTime == -1) {
+		String duration = "";
+		
+		if (skipped) {
+			duration = "0.0";
+		} else if (endTime > -1) {
+			duration = Double.toString(((double)(endTime - startTime)) / 1000.0d); 
+		} else {
 			throw new IllegalStateException("MarkComplete has not yet been called");
 		}
-		
-		
-		String duration = Double.toString(((double)(endTime - startTime)) / 1000.0d); 
 		
 		String partial = String.format("<testcase name=\"%s\" classname=\"%s\" time=\"%s\"", name, className, duration);
 		StringBuilder builder = new StringBuilder(partial);
 		
-		if (error == null) {
+		if (error == null && failure == null) {
 			builder.append("/>");
 			return builder.toString();
 		}
 		// Add in error and system out/err
 		builder.append(">\n");
-		builder.append(error.render());
+
+		if (failure != null) {
+			builder.append(failure.render());
+		}
+		
+		if (error != null) {
+			builder.append(error.render());
+		}
+		
 		if (StringUtils.isNotBlank(systemOut)) {
 			builder.append("    <system-out><![CDATA[");
 			builder.append(systemOut);
-			builder.append("]]></system-out>");
+			builder.append("]]></system-out>\n");
 		}
 		if (StringUtils.isNotBlank(systemErr)) {
-			builder.append("    <system-out><![CDATA[");
+			builder.append("    <system-err><![CDATA[");
 			builder.append(systemErr);
-			builder.append("]]></system-out>");
+			builder.append("]]></system-err>\n");
 		}
 		
+		builder.append("</testcase>\n");
 		
-		return "";
+		return builder.toString();
 	}
 
 	public void setError(Error error) {
@@ -75,6 +91,26 @@ public class TestCase {
 	public void setSystemErr(String systemErr) {
 		this.systemErr = systemErr;
 	}
+
+	public void setFailure(Error failure) {
+		failure.setElement("failure");
+		this.failure = failure;
+		
+	}
+
+	public boolean hasError() {
+		return error != null;
+	}
 	
+	public boolean hasFailure() {
+		return failure != null;
+	}
 	
+	public void setSkipped(boolean skipped) {
+		this.skipped = skipped;
+	}
+	
+	public boolean isSkipped() {
+		return this.skipped;
+	}
 }
