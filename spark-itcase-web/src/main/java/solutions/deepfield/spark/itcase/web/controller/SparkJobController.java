@@ -82,7 +82,7 @@ public class SparkJobController {
 		logger.info("Classpath will be: " + classpath);
 
 		RunResult commandResult = runUtil.runCommand(
-				"/usr/bin/spark-submit --class " + params.getClassName() + " --jars " + classpath + " " + mainJar + " " + StringUtils.join(params.getParameters(), " "));
+				"/usr/bin/spark-submit --master yarn --deploy-mode cluster --class " + params.getClassName() + " --jars " + classpath + " " + mainJar + " " + StringUtils.join(params.getParameters(), " "));
 		logger.info("Command result was: " + commandResult);
 		commandResult.setJobId(UUID.randomUUID().toString());
 
