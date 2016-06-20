@@ -73,6 +73,7 @@ public class SparkJobController {
 
 		// FIXME later
 		System.setProperty("YARN_CONF_DIR", "/etc/hadoop/conf");
+		System.setProperty("HADOOP_CONF_DIR", "/etc/hadoop/conf");
 		
 		LocalRepository repo = new LocalRepository();
 		repo.initialize();
