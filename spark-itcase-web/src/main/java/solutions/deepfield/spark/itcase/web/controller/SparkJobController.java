@@ -71,6 +71,9 @@ public class SparkJobController {
 	public @ResponseBody RunResult runJob(@RequestBody RunParams params) throws Exception {
 		logger.info("Received: {}", params);
 
+		// FIXME later
+		System.setProperty("YARN_CONF_DIR", "/etc/hadoop/conf");
+		
 		LocalRepository repo = new LocalRepository();
 		repo.initialize();
 
