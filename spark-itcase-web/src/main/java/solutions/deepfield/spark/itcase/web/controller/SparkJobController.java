@@ -71,9 +71,6 @@ public class SparkJobController {
 	public @ResponseBody RunResult runJob(@RequestBody RunParams params) throws Exception {
 		logger.info("Received: {}", params);
 
-		// FIXME later
-		System.setProperty("YARN_CONF_DIR", "/etc/hadoop/conf");
-		System.setProperty("HADOOP_CONF_DIR", "/etc/hadoop/conf");
 		
 		LocalRepository repo = new LocalRepository();
 		repo.initialize();
@@ -86,7 +83,7 @@ public class SparkJobController {
 		logger.info("Classpath will be: " + classpath);
 
 		RunResult commandResult = runUtil.runCommand(
-				"/usr/bin/spark-submit --master yarn --deploy-mode cluster --class " + params.getClassName() + " --jars " + classpath + " " + mainJar + " " + StringUtils.join(params.getParameters(), " "));
+				"/usr/bin/spark-submit --class " + params.getClassName() + " --jars " + classpath + " " + mainJar + " " + StringUtils.join(params.getParameters(), " "));
 		logger.info("Command result was: " + commandResult);
 		commandResult.setJobId(UUID.randomUUID().toString());
 
