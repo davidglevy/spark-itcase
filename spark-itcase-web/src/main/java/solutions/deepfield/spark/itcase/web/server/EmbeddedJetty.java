@@ -44,7 +44,6 @@ public class EmbeddedJetty {
 
 	private static final Logger logger = LoggerFactory.getLogger(EmbeddedJetty.class);
 
-	private static final int DEFAULT_PORT = 10080;
 	private static final String CONTEXT_PATH = "/";
 	private static final String MAPPING_URL = "/rest/*";
 
@@ -58,7 +57,7 @@ public class EmbeddedJetty {
 		}
 	}
 
-	private static int getPortFromArgs(String[] args) {
+	private static Integer getPortFromArgs(String[] args) {
 		if (args.length > 0) {
 			try {
 				int result = Integer.valueOf(args[0]);
@@ -67,19 +66,21 @@ public class EmbeddedJetty {
 			} catch (NumberFormatException ignore) {
 			}
 		}
-		logger.info("Jetty port from default is [" + DEFAULT_PORT + "]");
-		return DEFAULT_PORT;
+		logger.info("No port from arguments");
+		return null;
 	}
 
-	private void startJetty(int port) throws Exception {
+	private void startJetty(Integer port) throws Exception {
 		logger.info("Configuring Spring Context");
 		WebApplicationContext context = getContext();
 		ConfigUtil config = new ConfigUtil();
 		config.init();
 		
-		
 		logger.info("Creating Jetty");
-		Server server = new Server(config.getPort());
+		if (port == null) {
+			port = config.getPort();
+		}
+		Server server = new Server(port);
 
 		logger.info("Initializing Jetty Spring context");
 		server.setHandler(getServletContextHandler(context));
