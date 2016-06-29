@@ -64,7 +64,7 @@ Also add the following dependency to utilise the required annotations:
 		<dependency>
 			<groupId>solutions.deepfield</groupId>
 			<artifactId>spark-itcase-annotations</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3</version>
 		</dependency>
 ~~~~
 ## 4.) Add an annotated test class
