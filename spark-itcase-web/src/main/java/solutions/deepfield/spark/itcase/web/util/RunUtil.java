@@ -47,6 +47,7 @@ public class RunUtil {
 //
 //		ExecuteWatchdog watchdog = new ExecuteWatchdog(60 * 1000);
 		Executor executor = new DefaultExecutor();
+		
 		executor.setExitValue(0);
 		//executor.setWatchdog(watchdog);
 		RunResult result = new RunResult();

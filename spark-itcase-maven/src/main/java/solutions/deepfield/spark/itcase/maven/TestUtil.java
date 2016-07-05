@@ -1,6 +1,7 @@
 package solutions.deepfield.spark.itcase.maven;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -56,6 +57,8 @@ public class TestUtil {
     private URLClassLoader classLoader;
     
 	public void init() throws Exception {
+		String classDir = buildDir + File.separator + "classes";
+		
 		if (testTarget == null) {
 			testTarget = buildDir + File.separator + "test-classes";
 		}
@@ -64,13 +67,17 @@ public class TestUtil {
 		List<String> files = buildFiles(project.getGroupId(), project.getArtifactId(), project.getVersion());
 		log.info("Found deps [" + files.size() + "]");
 		
-		URL[] urls = new URL[files.size()];
-		for (int i = 0; i < urls.length; i++) {
-			urls[i] = new File(files.get(i)).toURL();
-			log.info("Found classpath entry " + urls[i]);
+		List<URL> urls = new ArrayList<URL>();
+		for (String filePath : files) {
+			urls.add(loadUrl(filePath));
 		}
-				
-		classLoader = new URLClassLoader(urls, null);
+		urls.add(loadUrl(classDir));
+		urls.add(loadUrl(testTarget));
+		
+		
+		URL[] urlArray = urls.toArray(new URL[urls.size()]);
+		classLoader = new URLClassLoader(urlArray, TestUtil.class.getClassLoader());
+		//classLoader.loadClass("solutions.deepfield.shs.spark.facade.BinaryFileIngestor");
 		
 		testClasses = findTestClasses();
 		if (testClasses.isEmpty()) {
@@ -78,6 +85,18 @@ public class TestUtil {
 		} else {
 			log.info("Found [" + testClasses.size() + "] test classes");
 		}
+	}
+
+	private URL loadUrl(String filePath) throws MalformedURLException {
+		File classPathFile = new File(filePath);
+		if (classPathFile.exists()) {
+			log.info("Found class path file: " + classPathFile.getAbsolutePath());
+		} else {
+			throw new RuntimeException("Unable to load classpath: " + classPathFile.getAbsolutePath());
+		}
+		URL url = classPathFile.toURL();
+		log.info("Found classpath entry " + url + "\n");
+		return url;
 	}
 	
 	public List<String> buildFiles(String groupId, String artifactId, String version)
@@ -136,17 +155,18 @@ public class TestUtil {
 		File file = new File(testTarget);
 
 		// convert the file to URL format
-		URL url = file.toURI().toURL();
-		URL[] urls = new URL[] { url };
+		//URL url = file.toURI().toURL();
+		//URL[] urls = new URL[] { url };
 
 		// load this folder into Class loader
-		ClassLoader cl = new URLClassLoader(urls, classLoader);
+		//ClassLoader cl = new URLClassLoader(urls, classLoader);
 
 		Collection<File> classFiles = listFiles(file);
 		
 		List<Class> testClasses = new ArrayList<>();
 		
 		for (File classFile : classFiles) {
+			log.info("############################ BEGIN ##########################");
 			String path = classFile.getAbsolutePath();
 			log.info("Found [" + path + "]");
 			if (!path.endsWith(".class")) {
@@ -159,18 +179,29 @@ public class TestUtil {
 			String shortName = path.substring(testTarget.length() + 1, path.length() - 6);
 			String[] parts = StringUtils.split(shortName, File.separator);
 			String className = StringUtils.join(parts, ".");
-			log.info("Found test class [" + className + "]");
+			log.info("Found potential test class [" + className + "]");
 			// load the Address class in 'c:\\other_classes\\'
-			Class cls = cl.loadClass(className);
+			Class cls = classLoader.loadClass(className);
 			log.info("Class loaded is [" + cls.getCanonicalName() + "]");
 			
-			if (cls.getAnnotation(SparkITCase.class) != null) {
-				log.info("Could not find test annotation on [" + cls.getCanonicalName() + "]");
-			} else {
-				log.info("Found test annotation on [" + cls.getCanonicalName() + "]");
-				testClasses.add(cls);
+			
+			boolean found = false;
+			for (Annotation a : cls.getAnnotations()) {
+				log.info("Found annotation [" + a.annotationType().getCanonicalName() + "]");
+				if (a.annotationType().equals(SparkITCase.class)) {
+					found = true;
+					break;
+				}
 			}
 			
+			if (found) {
+				log.info("Found test annotation on [" + cls.getCanonicalName() + "]");
+				testClasses.add(cls);
+			} else {
+				log.info("Could not find test annotation on [" + cls.getCanonicalName() + "]");
+			}
+			
+			log.info("Finish cls [" + cls.getCanonicalName() + "]\n\n\n");
 		}
 		
 		return testClasses;

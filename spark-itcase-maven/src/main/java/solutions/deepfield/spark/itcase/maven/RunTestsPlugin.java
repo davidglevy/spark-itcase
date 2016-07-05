@@ -193,7 +193,7 @@ public class RunTestsPlugin extends BaseSparkITCasePlugin {
 
 		List<List<String>> listOfTests = new ArrayList<>();
 		for (Class testClass : testUtil.getTestClasses()) {
-			getLog().info("Running test class [" + testClass + "]");
+			getLog().info("Examining test class [" + testClass + "]");
 			// TODO Add inner method to run each annotated test method in class.
 			// Invoke spark/run with SparkSubmitWrapper; main JAR is ???
 
